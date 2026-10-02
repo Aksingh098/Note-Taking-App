@@ -56,6 +56,10 @@ dependencies {
     //Icons
     implementation(libs.androidx.compose.material.icons.extended)
 
+    //viewModel
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+
+
     //room
 
 

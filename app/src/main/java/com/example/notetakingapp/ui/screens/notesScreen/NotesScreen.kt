@@ -2,7 +2,6 @@ package com.example.notetakingapp.ui.screens.notesScreen
 
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -11,13 +10,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,11 +26,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
-fun NotesScreen() {
+fun NotesScreen(
+    viewModel: NotesViewModel = viewModel(factory = NotesViewModel.Factory)
+) {
 
     var title by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
@@ -80,8 +84,11 @@ fun NotesScreen() {
         Spacer(modifier = Modifier.padding(8.dp))
 
         Button(
-            onClick = {},
+            onClick = {
+                viewModel.addNote(title = title, description)
+            },
             modifier = Modifier.fillMaxWidth(),
+            enabled = title.isNotBlank() && description.isNotBlank()
         ) {
             Text("Save")
         }
@@ -93,40 +100,47 @@ fun NotesScreen() {
             style = MaterialTheme.typography.titleLarge
         )
         Spacer(Modifier.height(12.dp))
+        val notes = viewModel.notes.collectAsState().value
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            items(10){
-                Surface(
-                    modifier = Modifier.fillMaxWidth()
-                        .clickable{
-                            //TODO: navigate to note detail screen
-                        },
-                    color = Color.Gray,
-                    shape = RoundedCornerShape(14.dp)
-                ){
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(16.dp)
-                    ) {
-                        Text("Title",
-                            style = MaterialTheme.typography.titleMedium,
-                            color = Color.Black,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                        Text("Description",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = Color.Black)
 
-                    }
-
-                }
-
+            items(notes) { note ->
+                NoteCard(
+                    title = note.title,
+                    description = note.content
+                )
             }
 
         }
 
+    }
+
+}
+
+@Composable
+fun NoteCard(
+    title:String,
+    description: String
+){
+    Card(modifier = Modifier.fillMaxWidth()
+        .padding(8.dp)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = description,
+                style = MaterialTheme.typography.bodySmall,
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 2
+
+            )
+        }
 
     }
 }
