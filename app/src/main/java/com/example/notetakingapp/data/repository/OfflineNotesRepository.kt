@@ -7,7 +7,9 @@ import kotlinx.coroutines.flow.Flow
 class OfflineNotesRepository(private val dao: NoteDao): NotesRepository
 //val -> make it a property that cannot be reassigned
 {
-    override fun addNote(note: Note) = dao.insertNote(note)
+    override suspend fun addNote(note: Note) = dao.insertNote(note)
 
     override fun getNotes(): Flow<List<Note>> = dao.getNotes()
+
+
 }

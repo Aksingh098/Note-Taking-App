@@ -2,6 +2,7 @@ package com.example.notetakingapp.ui.screens.notesScreen
 
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -30,9 +31,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import com.example.notetakingapp.ui.navigation.NavRoutes
 
 @Composable
 fun NotesScreen(
+    navController: NavHostController,
     viewModel: NotesViewModel = viewModel(factory = NotesViewModel.Factory)
 ) {
 
@@ -108,7 +112,14 @@ fun NotesScreen(
             items(notes) { note ->
                 NoteCard(
                     title = note.title,
-                    description = note.content
+                    description = note.content,
+                    modifier = Modifier.clickable{
+                        navController.navigate(NavRoutes.NotesDetailScreen(
+                            noteTitle = note.title,
+                            noteContent = note.content
+                        ))
+
+                    }
                 )
             }
 
@@ -120,10 +131,11 @@ fun NotesScreen(
 
 @Composable
 fun NoteCard(
+    modifier: Modifier = Modifier,
     title:String,
     description: String
 ){
-    Card(modifier = Modifier.fillMaxWidth()
+    Card(modifier = modifier.fillMaxWidth()
         .padding(8.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
@@ -148,5 +160,5 @@ fun NoteCard(
 @Preview(showSystemUi = true, showBackground = true, device = "spec:width=411dp,height=891dp")
 @Composable
 fun NotesScreenPreview() {
-    NotesScreen()
+
 }

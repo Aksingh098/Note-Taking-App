@@ -11,7 +11,7 @@ interface AppContainer{
 
 
 
-class DefaultAppContainer(private val context: Context) : AppContainer {
+class  DefaultAppContainer(private val context: Context) : AppContainer {
 
     override val notesRepository: NotesRepository by lazy{
         NotesDataBase.getDatabase(context).NotesDao().let { notesDao ->
